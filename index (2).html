@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Imran | Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .animate-blink { animation: blink 1s step-end infinite; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .animate-marquee { animation: marquee 32s linear infinite; }
+    @media (prefers-reduced-motion: reduce) { .animate-marquee, .animate-blink { animation: none; } }
+    html { scroll-behavior: smooth; background: #0A0F0B; }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@18.3.1",
+      "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+      "motion/react": "https://esm.sh/motion@11.18.2/react?external=react,react-dom",
+      "lucide-react": "https://esm.sh/lucide-react@0.383.0?external=react"
+    }
+  }
+  </script>
+  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-type="module">
+import React, { useEffect, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
+import { motion, AnimatePresence } from "motion/react";
+import { Check, ArrowRight } from "lucide-react";
+
+const VIDEO_SRC =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260601_110537_3a579fa0-7bbc-4d94-9d25-0e816c7840f5.mp4";
+
+const NAV_LINKS = ["Work", "Skills", "About", "Contact"];
+const EMAIL = "khanimra996@gmail.com";
+const INSTA = "imansari6824";
+const hrefFor = (l) => (l === "Get in touch" ? "#contact" : `#${l.toLowerCase()}`);
+const STEPS = [
+  { t: "Tell me the idea", d: "Send a message with what you need. I'll reply with questions and an honest timeline." },
+  { t: "I design it first", d: "UI/UX comes before code: a clear layout you can approve before anything gets built." },
+  { t: "I build and ship it", d: "I code it, use AI where it saves time, and send you a live link to review." },
+];
+const MARQUEE = ["AI", "Web development", "UI/UX design", "Open for paid projects", "Class 12, still learning"];
+const PROJECTS = [
+  { name: "Live project", url: "https://keen-melba-29b9f4.netlify.app" },
+  { name: "Blue Threads Store", url: "https://bluethreads-store-in.netlify.app" },
+];
+const SERVICES = ["AI", "Web dev", "UI/UX", "Other"];
+
+/* ---------- Typewriter hook ---------- */
+function useTypewriter(text, speed = 38, startDelay = 600) {
+  const [displayed, setDisplayed] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    let i = 0;
+    setDisplayed("");
+    setDone(false);
+
+    const timeout = setTimeout(() => {
+      interval = setInterval(() => {
+        i += 1;
+        setDisplayed(text.slice(0, i));
+        if (i >= text.length) {
+          clearInterval(interval);
+          setDone(true);
+        }
+      }, speed);
+    }, startDelay);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }, [text, speed, startDelay]);
+
+  return { displayed, done };
+}
+
+/* ---------- Navbar ---------- */
+function Navbar({ isOpen, setIsOpen }) {
+  return (
+    <header className="fixed top-0 inset-x-0 z-10 px-5 sm:px-8 py-4 sm:py-5 flex flex-row justify-between items-center bg-transparent">
+      <div className="flex flex-row gap-3 items-center">
+        <span className="text-[21px] sm:text-[26px] tracking-tight text-[#F2F4EF] font-medium select-none">
+          Imran&reg;
+        </span>
+        <motion.span animate={{ rotate: 360 }} transition={{ duration: 14, repeat: Infinity, ease: "linear" }} className="inline-block text-[25px] sm:text-[30px] text-[#F2F4EF] select-none tracking-[-0.02em] font-medium leading-none mb-1">&#10033;</motion.span>
+      </div>
+
+      <nav className="hidden md:flex flex-row text-[23px] text-[#F2F4EF]">
+        {NAV_LINKS.map((label, i) => (
+          <span key={label} className="flex flex-row">
+            <a href={hrefFor(label)} className="hover:opacity-60 transition-opacity">
+              {label}
+            </a>
+            {i < NAV_LINKS.length - 1 && <span className="opacity-40">,&nbsp;</span>}
+          </span>
+        ))}
+      </nav>
+
+      <a
+        href="#contact"
+        className="hidden md:block text-[23px] text-[#F2F4EF] underline underline-offset-2 hover:opacity-60 transition-opacity"
+      >
+        Get in touch
+      </a>
+
+      <button
+        type="button"
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((v) => !v)}
+        className="md:hidden relative z-[11] flex flex-col gap-[5px] p-1"
+      >
+        <span className={`block w-6 h-[2px] bg-[#F2F4EF] transition-all duration-300 ${isOpen ? "rotate-45 translate-y-[7px]" : ""}`} />
+        <span className={`block w-6 h-[2px] bg-[#F2F4EF] transition-all duration-300 ${isOpen ? "opacity-0" : ""}`} />
+        <span className={`block w-6 h-[2px] bg-[#F2F4EF] transition-all duration-300 ${isOpen ? "-rotate-45 -translate-y-[7px]" : ""}`} />
+      </button>
+    </header>
+  );
+}
+
+function MobileOverlay({ isOpen, close }) {
+  return (
+    <div
+      className={`md:hidden fixed inset-0 z-[9] bg-[#0A0F0B]/95 backdrop-blur-sm flex flex-col items-start justify-center gap-6 px-8 transition-opacity duration-300 ${
+        isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      {[...NAV_LINKS, "Get in touch"].map((label) => (
+        <a key={label} href={hrefFor(label)} onClick={close} className="text-4xl font-medium tracking-tight text-[#F2F4EF]">
+          {label}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+/* ---------- Background video ---------- */
+function BackgroundVideo() {
+  const videoRef = useRef(null);
+
+  // Desktop: scrub with horizontal mouse movement (rAF-driven, smoothed)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    let prevX = null;
+    let target = 0;   // where the mouse says we should be
+    let current = 0;  // smoothed position we actually seek to
+    let seeking = false;
+    let raf = 0;
+
+    const onSeeked = () => { seeking = false; };
+
+    const onMove = (e) => {
+      if (window.innerWidth < 1024) return;
+      const d = video.duration;
+      if (!d || Number.isNaN(d)) return;
+      if (prevX === null) { prevX = e.clientX; return; }
+      const delta = e.clientX - prevX;
+      prevX = e.clientX;
+      target = Math.min(Math.max(target + (delta / window.innerWidth) * 0.8 * d, 0), d);
+    };
+
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      if (window.innerWidth < 1024 || seeking) return;
+      const diff = target - current;
+      if (Math.abs(diff) < 0.02) return;       // ignore sub-frame changes
+      current += diff * 0.18;                  // ease toward target
+      seeking = true;
+      if (video.fastSeek) video.fastSeek(current);
+      else video.currentTime = current;
+    };
+
+    video.pause();
+    video.addEventListener("seeked", onSeeked);
+    window.addEventListener("mousemove", onMove, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      video.removeEventListener("seeked", onSeeked);
+      window.removeEventListener("mousemove", onMove);
+    };
+  }, []);
+
+  // Mobile: normal autoplay
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || window.innerWidth >= 1024) return;
+    video.autoplay = true;
+    video.play().catch(() => {});
+  }, []);
+
+  return (
+    <div className="order-last lg:order-none relative lg:absolute lg:inset-0 lg:z-0 overflow-hidden pointer-events-none w-full aspect-square md:aspect-video lg:aspect-auto lg:h-full bg-neutral-900 lg:bg-transparent">
+      <video
+        ref={videoRef}
+        src={VIDEO_SRC}
+        muted
+        playsInline
+        preload="auto"
+        className="w-full h-full object-cover object-right lg:object-right-bottom will-change-transform"
+      />
+      <div className="hidden lg:block absolute inset-0 bg-gradient-to-r from-[#0A0F0B] via-[#0A0F0B]/55 to-transparent" />
+    </div>
+  );
+}
+
+/* ---------- Service pills ---------- */
+function ServicePicker() {
+  const [services, setServices] = useState([]);
+
+  const toggle = (s) =>
+    setServices((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+
+  return (
+    <div>
+      <h2 className="text-2xl font-medium tracking-tight mb-2">What do you need built?</h2>
+      <p className="opacity-85 text-[#7F8C7E] mb-8">Select all that apply</p>
+
+      <div className="flex flex-wrap gap-3 mb-8">
+        {SERVICES.map((s) => {
+          const active = services.includes(s);
+          return (
+            <motion.button
+              key={s}
+              type="button"
+              whileTap={{ scale: 0.96 }}
+              onClick={() => toggle(s)}
+              aria-pressed={active}
+              className={`inline-flex items-center rounded-full px-6 py-3 text-base font-medium transition-colors ${
+                active
+                  ? "bg-[#CFE8C8] text-[#0A0F0B] shadow-md shadow-emerald-400/10 transform"
+                  : "bg-white/[0.03] text-[#E6EAE3] border border-white/10 hover:bg-white/10"
+              }`}
+            >
+              <AnimatePresence initial={false}>
+                {active && (
+                  <motion.span
+                    initial={{ scale: 0, opacity: 0, width: 0, marginRight: 0 }}
+                    animate={{ scale: 1, opacity: 1, width: "auto", marginRight: 8 }}
+                    exit={{ scale: 0, opacity: 0, width: 0, marginRight: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="inline-flex"
+                  >
+                    <Check size={16} strokeWidth={2.5} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+              {s}
+            </motion.button>
+          );
+        })}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {services.length === 0 ? (
+          <motion.p
+            key="empty"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            exit={{ opacity: 0 }}
+            className="italic text-xs"
+          >
+            Please click to select services above.
+          </motion.p>
+        ) : (
+          <motion.div
+            key="active"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+            className="overflow-hidden max-w-xl"
+          >
+            <div className="bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4 flex flex-row items-center justify-between gap-4">
+              <span className="text-sm text-[#E6EAE3]">
+                Ready to inquire about: {services.join(", ")}
+              </span>
+              <a
+                href={`mailto:${EMAIL}?subject=${encodeURIComponent("Project inquiry")}&body=${encodeURIComponent("Hi Imran, I'd like to talk about: " + services.join(", "))}`}
+                className="shrink-0 inline-flex items-center gap-1.5 text-[#9FD38F] uppercase text-xs font-medium hover:opacity-70 transition-opacity"
+              >
+                Let's Go <ArrowRight size={14} />
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+/* ---------- Marquee ---------- */
+function Marquee() {
+  const row = [...MARQUEE, ...MARQUEE];
+  return (
+    <div className="relative z-10 overflow-hidden border-y border-white/10 py-5 bg-[#0A0F0B]">
+      <div className="flex w-max animate-marquee">
+        {[0, 1].map((k) => (
+          <div key={k} className="flex shrink-0 items-center gap-8 pr-8" aria-hidden={k === 1}>
+            {row.map((t, i) => (
+              <span key={i} className="flex items-center gap-8 text-xl md:text-2xl tracking-tight text-[#9AA699] whitespace-nowrap">
+                {t} <span className="text-[#9FD38F]">&#10033;</span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Sections ---------- */
+function Sections() {
+  return (
+    <div className="bg-[#0A0F0B]">
+      <div className="max-w-7xl mx-auto px-6 divide-y divide-white/10">
+        <motion.section initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" }} id="work" className="py-20 scroll-mt-20">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-10">Selected work</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {PROJECTS.map((p) => (
+              <a
+                key={p.url}
+                href={p.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-end justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 min-h-40 hover:bg-white/10 hover:-translate-y-1 transition-all duration-300"
+              >
+                <div>
+                  <h3 className="text-2xl font-medium tracking-tight text-[#E6EAE3]">{p.name}</h3>
+                  <p className="text-sm text-[#7F8C7E] mt-1 break-all">{p.url.replace("https://", "")}</p>
+                </div>
+                <ArrowRight className="shrink-0 text-[#9FD38F] -rotate-45 group-hover:rotate-0 transition-transform" />
+              </a>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" }} id="skills" className="py-20 scroll-mt-20">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-10">Skills</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-white/10 p-6">
+              <h3 className="text-xl font-medium text-[#E6EAE3] mb-2">AI + Dev</h3>
+              <p className="text-[#9AA699]">Building websites and apps, and putting AI tools to work inside them.</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 p-6">
+              <h3 className="text-xl font-medium text-[#E6EAE3] mb-2">UI/UX Design</h3>
+              <p className="text-[#9AA699]">Designing clean, easy-to-use interfaces before and while building them.</p>
+            </div>
+          </div>
+        </motion.section>
+
+        <motion.section initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" }} id="process" className="py-20 scroll-mt-20">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-10">How we'd work together</h2>
+          <ol className="grid gap-4 md:grid-cols-3">
+            {STEPS.map((st, i) => (
+              <motion.li
+                key={st.t}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.18 }}
+                className="rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+              >
+                <span className="text-sm text-[#9FD38F]">Step {i + 1}</span>
+                <h3 className="text-xl font-medium text-[#E6EAE3] mt-2 mb-2">{st.t}</h3>
+                <p className="text-[#9AA699]">{st.d}</p>
+              </motion.li>
+            ))}
+          </ol>
+        </motion.section>
+
+        <motion.section initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" }} id="about" className="py-20 scroll-mt-20">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-6">About</h2>
+          <p className="text-lg md:text-xl text-[#9AA699] leading-relaxed max-w-2xl">
+            I'm in Class 12 and I'm learning technical skills the hands-on way: by shipping. I pair design thinking with AI tools and code, so what I make looks right and actually works. I'm not an agency. You get me directly, honest timelines, and work I'm proud to put my name on.
+          </p>
+        </motion.section>
+
+        <motion.section initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ duration: 0.7, ease: "easeOut" }} id="contact" className="py-20 scroll-mt-20">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-4">Connect with me for paid projects</h2>
+          <p className="text-[#9AA699] mb-8">Send a message and I'll get back to you.</p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href={`mailto:${EMAIL}`}
+              className="inline-flex items-center justify-center rounded-full bg-[#CFE8C8] text-[#0A0F0B] px-6 py-3 font-medium shadow-md shadow-emerald-400/10 hover:opacity-90 transition-opacity"
+            >
+              {EMAIL}
+            </a>
+            <a
+              href={`https://instagram.com/${INSTA}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center rounded-full bg-white/[0.03] text-[#E6EAE3] border border-white/10 px-6 py-3 font-medium hover:bg-white/10 transition-colors"
+            >
+              Instagram @{INSTA}
+            </a>
+          </div>
+        </motion.section>
+      </div>
+      <footer className="max-w-7xl mx-auto px-6 py-8 text-sm text-[#7F8C7E]">&copy; {new Date().getFullYear()} Imran</footer>
+    </div>
+  );
+}
+
+/* ---------- App ---------- */
+function App() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { displayed, done } = useTypewriter("i'm imran.\nlearning by building.", 38, 600);
+
+  return (
+    <div className="relative bg-[#0A0F0B] text-[#E6EAE3] font-sans selection:bg-[#2C4A2E] selection:text-white antialiased overflow-x-hidden flex flex-col lg:block lg:min-h-screen">
+      <Navbar isOpen={isMobileMenuOpen} setIsOpen={setIsMobileMenuOpen} />
+      <MobileOverlay isOpen={isMobileMenuOpen} close={() => setIsMobileMenuOpen(false)} />
+
+      <div className="relative flex flex-col lg:block lg:min-h-screen">
+        <BackgroundVideo />
+
+        <div className="relative z-10 flex flex-col order-first lg:order-none w-full bg-[#0A0F0B] lg:bg-transparent pb-8 lg:pb-0 lg:min-h-screen">
+          <main id="spade-hero" className="w-full max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+              <h1 className="text-5xl md:text-6xl lg:text-[76px] font-normal tracking-tight text-[#F2F4EF] leading-[1.08] mb-8 select-none w-full whitespace-pre-wrap">
+                {displayed}
+                {!done && (
+                  <span className="inline-block w-[2px] h-[1.1em] bg-[#F2F4EF] align-middle ml-[2px] animate-blink" />
+                )}
+              </h1>
+            </motion.div>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+              <p className="text-lg md:text-xl text-[#9AA699] leading-relaxed font-normal mb-14 max-w-2xl">
+                Class 12 student teaching myself AI, web dev and UI/UX. <br /> Got an idea? Pick what you need and I'll build it with you.
+              </p>
+            </motion.div>
+
+            <ServicePicker />
+          </main>
+        </div>
+      </div>
+
+      <Marquee />
+      <Sections />
+    </div>
+  );
+}
+
+createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
